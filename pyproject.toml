@@ -1,0 +1,9 @@
+[project]
+name = "monnect"
+version = "0.2.0"
+description = "Automatically connect a Bluetooth speaker when a display is detected on macOS"
+authors = [{ name="Ankit Gupta" }]
+dependencies = []
+
+[project.scripts]
+monnect = "monnect.cli:main"
