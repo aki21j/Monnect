@@ -4,11 +4,38 @@ import json
 from pathlib import Path
 
 CONFIG_PATH = Path.home() / ".config" / "monnect" / "config.json"
+LOG_DIR = Path.home() / ".local" / "state" / "monnect"
+LOG_FILE = LOG_DIR / "monnect.log"
+
+def log(message):
+    LOG_DIR.mkdir(parents=True, exist_ok=True)
+    with open(LOG_FILE, "a") as f:
+        f.write(f"{message}\n")
 
 
 def load_config():
+    if not CONFIG_PATH.exists():
+        raise RuntimeError("Configuration not found. Run 'monnect setup'.")
+
     with open(CONFIG_PATH) as f:
-        return json.load(f)
+        config = json.load(f)
+
+    required_keys = [
+        "display",
+        "speaker_mac",
+        "interval",
+        "blueutil_path",
+        "system_profiler_path",
+    ]
+
+    for key in required_keys:
+        if key not in config:
+            raise RuntimeError(
+                f"Invalid configuration: missing '{key}'. "
+                "Run 'monnect setup' again."
+            )
+
+    return config
 
 
 def display_connected(display_name, system_profiler_path):
@@ -34,10 +61,12 @@ def speaker_connected(mac, blueutil_path):
 
 
 def connect(mac, blueutil_path):
+    log("Connecting speaker")
     subprocess.run([blueutil_path, "--connect", mac])
 
 
 def disconnect(mac, blueutil_path):
+    log("Disconnecting speaker")
     subprocess.run([blueutil_path, "--disconnect", mac])
 
 
@@ -52,26 +81,27 @@ def run():
 
     stable_false_count = 0
     stable_true_count = 0
+    try:
+        while True:
+            monitor_present = display_connected(display, system_profiler_path)
+            speaker_is_connected = speaker_connected(mac, blueutil_path)
 
-    while True:
-        monitor_present = display_connected(display, system_profiler_path)
-        speaker_is_connected = speaker_connected(mac, blueutil_path)
+            if monitor_present:
+                stable_true_count += 1
+                stable_false_count = 0
+            else:
+                stable_false_count += 1
+                stable_true_count = 0
 
-        if monitor_present:
-            stable_true_count += 1
-            stable_false_count = 0
-        else:
-            stable_false_count += 1
-            stable_true_count = 0
+            if stable_true_count >= 2 and not speaker_is_connected:
+                connect(mac, blueutil_path)
 
-        if stable_true_count >= 2 and not speaker_is_connected:
-            connect(mac, blueutil_path)
+            if stable_false_count >= 2 and speaker_is_connected:
+                disconnect(mac, blueutil_path)
 
-        if stable_false_count >= 2 and speaker_is_connected:
-            disconnect(mac, blueutil_path)
-
-        time.sleep(interval)
-
+            time.sleep(interval)
+    except Exception as e:
+        log(f"Watcher error: {e}")
 
 if __name__ == "__main__":
     run()

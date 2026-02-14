@@ -1,3 +1,4 @@
+from . import __version__
 import sys
 from .utils import get_displays, get_paired_devices
 from .installer import (
@@ -67,28 +68,39 @@ import json
 def status():
     running = is_running()
 
-    print("Service running:", "YES" if running else "NO")
+    print("Monnect Status")
+    print("--------------")
+    print(f"Service running:      {'Yes' if running else 'No'}")
 
     if not CONFIG_PATH.exists():
-        print("No configuration found.")
+        print("Configuration:        Not configured")
         return
 
     config = json.loads(CONFIG_PATH.read_text())
 
     display = config["display"]
     mac = config["speaker_mac"]
+    interval = config["interval"]
     blueutil_path = config["blueutil_path"]
     system_profiler_path = config["system_profiler_path"]
 
     monitor = display_connected(display, system_profiler_path)
     speaker = speaker_connected(mac, blueutil_path)
 
-    print("Monitor detected:", monitor)
-    print("Speaker connected:", speaker)
+    print(f"Configured display:   {display}")
+    print(f"Display detected:     {'Yes' if monitor else 'No'}")
+    print(f"Configured speaker:   {mac}")
+    print(f"Speaker connected:    {'Yes' if speaker else 'No'}")
+    print(f"Polling interval:     {interval} seconds")
+
 
 def main():
     if len(sys.argv) < 2:
         print("Usage: monnect [setup|start|stop|status|doctor|uninstall]")
+        return
+    
+    if len(sys.argv) >= 2 and sys.argv[1] in ("--version", "-v"):
+        print(f"monnect {__version__}")
         return
 
     command = sys.argv[1]
