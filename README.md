@@ -1,103 +1,100 @@
 # Monnect
 
-Automatically connect or disconnect a Bluetooth speaker when a specific monitor is connected on macOS.
+Automatically connect or disconnect a Bluetooth speaker when a specific display is connected on macOS.
 
-Monnect runs as a background LaunchAgent and manages Bluetooth audio based on display state.
+Monnect runs in the background and watches for a configured external display.
+When the display is detected, it connects your chosen Bluetooth speaker.
+When the display is disconnected, it disconnects the speaker.
 
 ---
 
-## Features
+## Why?
 
-- Auto-connect speaker when monitor is detected
-- Auto-disconnect when monitor is removed
-- Debounced monitor detection (no flicker)
-- `monnect doctor` for environment validation
-- `monnect status` for live system state
-- CLI lifecycle management
-- Installable via pipx
+If you use:
+
+- An external monitor at your desk
+- A Bluetooth speaker
+- A MacBook that you dock and undock
+
+You’ve probably manually switched audio devices more times than you’d like.
+
+Monnect automates that.
+
+---
+
+## Installation
+
+### Option 1: pipx (Recommended)
+
+pipx install monnect
+
+### Option 2: Homebrew
+
+brew tap aki21j/monnect  
+brew install monnect
 
 ---
 
 ## Requirements
 
 - macOS
-- Python 3.9+
-- Homebrew
-- blueutil (auto-installed during setup if missing)
+- blueutil
 
----
+Install blueutil with:
 
-## Installation
-
-Recommended:
-
-    brew install pipx
-    pipx ensurepath
-    pipx install monnect
-
-For development:
-
-    git clone https://github.com/aki21j/Monnect.git
-    cd Monnect
-    pipx install -e .
+brew install blueutil
 
 ---
 
 ## Setup
 
-Run interactive setup:
+Run:
 
-    monnect setup
+monnect setup
 
-This will:
-- Detect available displays
-- Detect paired Bluetooth devices
-- Install background service
+This will guide you through selecting:
+
+- A display
+- A Bluetooth device
+
+Then start the service:
+
+monnect start
 
 ---
 
 ## Commands
 
-Start service:
-
-    monnect start
-
-Stop service:
-
-    monnect stop
-
-Check status:
-
-    monnect status
-
-Run diagnostics:
-
-    monnect doctor
-
-Uninstall service:
-
-    monnect uninstall
+monnect start      - Start background service  
+monnect stop       - Stop background service  
+monnect status     - Show current status  
+monnect doctor     - Validate environment  
+monnect --version  - Show version  
 
 ---
 
 ## How It Works
 
-Monnect:
-1. Monitors display state using system_profiler
-2. Checks Bluetooth state via blueutil
-3. Applies debounced logic
-4. Connects or disconnects speaker accordingly
-5. Runs continuously via macOS LaunchAgent
+- Uses system_profiler to detect display state
+- Uses blueutil to manage Bluetooth connections
+- Runs as a macOS LaunchAgent
+- Polling-based with debounce logic
 
 ---
 
-## Development
+## Uninstall
 
-    pipx uninstall monnect
-    pipx install -e .
+If installed via pipx:
+
+pipx uninstall monnect
+
+If installed via Homebrew:
+
+brew uninstall monnect  
+brew untap aki21j/monnect  
 
 ---
 
 ## License
 
-MIT License
+MIT
