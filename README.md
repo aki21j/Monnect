@@ -1,5 +1,9 @@
 # Monnect
 
+[![PyPI version](https://img.shields.io/pypi/v/monnect.svg)](https://pypi.org/project/monnect/)
+[![Python](https://img.shields.io/pypi/pyversions/monnect.svg)](https://pypi.org/project/monnect/)
+[![License](https://img.shields.io/github/license/aki21j/Monnect)](LICENSE)
+
 Automatically connect or disconnect a Bluetooth speaker when a specific display is connected on macOS.
 
 Monnect runs in the background and watches for a configured external display.
