@@ -12,11 +12,13 @@ build/
 dist/
 *.egg-info/
 .eggs/
+*.tar.gz
 
 # Virtual environments
 venv/
 env/
 .venv/
+.release-env/
 
 # pipx
 .local/
