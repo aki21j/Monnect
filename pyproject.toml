@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "monnect"
-version = "1.0.0"
+version = "1.0.1"
 description = "Automatically connect or disconnect a Bluetooth speaker when a specific display is connected on macOS."
 readme = "README.md"
 requires-python = ">=3.9"

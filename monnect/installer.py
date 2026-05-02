@@ -73,6 +73,8 @@ def create_launch_agent():
 </dict>
 </plist>
 """
+    PLIST_PATH.parent.mkdir(parents=True, exist_ok=True)
+
     with open(PLIST_PATH, "w") as f:
         f.write(plist_content)
 
